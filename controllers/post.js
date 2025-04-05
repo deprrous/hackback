@@ -17,14 +17,18 @@ exports.createPost = asyncHandler(async (req, res, next) => {
 exports.getPosts = asyncHandler(async (req, res, next) => {
    const sort = req.query.sort || "-createdAt"; // Default to sorting by createdAt in descending order
    const select = req.query.select || ""; // Allow field selection via query
-   const page = parseInt(req.query.page) || 1; // Default to page 1
-   const limit = parseInt(req.query.limit) || 2; // Default to a limit of 2 posts per page
+   const page = parseInt(req.query.page); // Default to page 1
+   const limit = parseInt(req.query.limit); // Default to a limit of 2 posts per page
 
    ["sort", "select", "page", "limit"].forEach((el) => delete req.query[el]);
 
    const pagination = await paginate(Post, page, limit); // Use Post for pagination
 
    const posts = await Post.find(req.query, select)
+      .populate({
+         path: "user_id",
+         select: "username ", // юуг авах гэж байна тэрийг бич
+      })
       .sort(sort)
       .skip(pagination.start - 1)
       .limit(limit);

@@ -1,14 +1,28 @@
 const express = require("express");
+const { protect, authorize } = require("../middleware/auth"); // Protect routes with authentication middleware
 const {
    createPost,
-   getPost,
    getPosts,
+   getPost,
    updatePost,
    deletePost,
 } = require("../controllers/post");
+
 const router = express.Router();
 
-router.route("/").post(createPost).get(getPosts);
+// Route to create a new post
+router.route("/").post(protect, createPost); // Only allow authenticated users to create posts
 
-router.route("/:id").put(updatePost).delete(deletePost).get(getPost);
+// Route to get all posts with paginat ion, sorting, and selecting specific fields
+router.route("/").get(getPosts);
+
+// Route to get a single post by ID
+router.route("/:id").get(getPost);
+
+// Route to update a post by ID
+router.route("/:id").put(protect, updatePost);
+
+// Route to delete a post by ID
+router.route("/:id").delete(protect, deletePost);
+
 module.exports = router;

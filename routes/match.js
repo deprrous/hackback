@@ -7,12 +7,16 @@ const { protect } = require("../middleware/auth");
 router.get("/newsfeed", protect, matchController.getNewsfeed);
 
 // Route to handle user choice (yes/no) for matching
-router.post("/choice", matchController.handleChoice);
+router.post("/choice", protect, matchController.handleChoice);
 
 // Route to get all confirmed matches for the current user
-router.get("/matches", matchController.getUserMatches);
+router.get("/matches", protect, matchController.getUserMatches);
 
 // Route to respond to a match request (yes/no)
-router.post("/respond-to-match-request", matchController.respondToMatchRequest);
+router.post(
+   "/respond-to-match-request",
+   protect,
+   matchController.respondToMatchRequest,
+);
 
 module.exports = router;

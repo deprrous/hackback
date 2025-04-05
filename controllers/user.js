@@ -5,6 +5,47 @@ const crypto = require("crypto");
 const path = require("path");
 // const fileUpload = require("express-fileupload");
 
+// In controllers/user.js
+
+// knsdjbskfjdbkhfbdkjfbdkhfjh
+// Update skills: want2teach and want2learn
+exports.updateSkills = asyncHandler(async (req, res, next) => {
+   const { want2teach, want2learn } = req.body; // Get skills from request body
+
+   // Validate input
+   if (!Array.isArray(want2teach) || !Array.isArray(want2learn)) {
+      throw new Error(
+         "Both 'want2teach' and 'want2learn' must be arrays.",
+         400,
+      );
+   }
+
+   // Find the user by ID
+   const user = await User.findById(req.params.id);
+   if (!user) {
+      throw new Error(`User not found with ID: ${req.params.id}`, 404);
+   }
+
+   // Check if the logged-in user is the same as the one trying to update the skills
+   if (req.userId !== user._id && req.role !== "admin") {
+      throw new Error(
+         "You do not have permission to update this user's skills.",
+         403,
+      );
+   }
+
+   // Update the want2teach and want2learn fields
+   user.want2teach = want2teach;
+   user.want2learn = want2learn;
+
+   await user.save();
+
+   res.status(200).json({
+      success: true,
+      data: user,
+   });
+});
+
 exports.createUser = asyncHandler(async (req, res, next) => {
    const user = await User.create(req.body);
    if (!user) throw new Error("something is wrong", 403);
