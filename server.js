@@ -5,6 +5,8 @@ const path = require("path");
 require("dotenv").config({ path: "./.env" });
 
 const userRoutes = require("./routes/user");
+const postRoutes = require("./routes/post");
+const matchRoutes = require("./routes/match");
 app = express();
 db();
 app.use(express.json());
@@ -30,6 +32,15 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 //       limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
 //    }),
 // );
+
+app.use("/api/users", userRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/matches", matchRoutes);
+
+app.get("/", (req, res) => {
+   res.send("Welcome to the API!");
+});
+
 app.listen(
    process.env.PORT,
    console.log(`Server is started on ${process.env.PORT}`),

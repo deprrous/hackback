@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const myError = require("../utils/myError");
 
 const UserSchema = new mongoose.Schema({
    username: {
@@ -86,7 +85,7 @@ UserSchema.methods.checkPassword = async function (enteredPassword) {
       match = await bcrypt.compare(enteredPassword, this.password);
       console.log(match);
    } catch (err) {
-      throw new myError("Email password not match!", 401);
+      throw new Error("Email password not match!", 401);
    }
    return match;
 };

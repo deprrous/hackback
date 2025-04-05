@@ -18,8 +18,10 @@ const MatchSchema = new mongoose.Schema({
    status: {
       type: String,
       enum: ["active", "inactive", "archived"],
-      default: "active", // The match is active until further actions (archiving, etc.)
+      default: "active",
    },
 });
+
+MatchSchema.index({ user1: 1, user2: 1 }, { unique: true }); // Ensure that a match between two users is unique
 
 module.exports = mongoose.model("Match", MatchSchema);

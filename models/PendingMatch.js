@@ -21,6 +21,12 @@ const PendingMatchSchema = new mongoose.Schema({
       enum: ["yes", "no"],
       default: "no", // Default is "no" until user selects
    },
+   createdAt: {
+      type: Date,
+      default: Date.now,
+   },
 });
+
+PendingMatchSchema.index({ user1: 1, user2: 1 }, { unique: true }); // Ensure that the match request between two users is unique
 
 module.exports = mongoose.model("PendingMatch", PendingMatchSchema);

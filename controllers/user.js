@@ -1,9 +1,9 @@
-const User = require("../model/User");
+const User = require("../models/User");
 const asyncHandler = require("express-async-handler");
 const paginate = require("../utils/paginate");
 const crypto = require("crypto");
 const path = require("path");
-const fileUpload = require("express-fileupload");
+// const fileUpload = require("express-fileupload");
 
 exports.createUser = asyncHandler(async (req, res, next) => {
    const user = await User.create(req.body);
@@ -33,7 +33,7 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
       pagination: pagination,
    });
 });
-exports.getUser = asyncHandlerUsers(async (req, res, next) => {
+exports.getUser = asyncHandler(async (req, res, next) => {
    const user = await User.findById(req.params.id);
    if (!user) throw new Error(`User not found id with ${req.params.id}`);
    res.status(200).json({
@@ -91,13 +91,17 @@ exports.login = asyncHandler(async (req, res, next) => {
    const { email, password } = req.body;
    if (!email || !password)
       throw new Error("Нууц үг эсвэл И-мэйл талбар хоосон байна", 400);
+
    const user = await User.findOne({ email: email }).select("+password");
    if (!user) throw new Error(`User not found email with ${email}`);
-   const match = user.checkPass(password);
-   console.log(user);
+
+   // Correct method name (checkPassword)
+   const match = await user.checkPassword(password);
+
    if (!match) {
       throw new Error("Нууц үг эсвэл И-мэйл талбар буруу байна", 400);
    }
+
    res.status(200).json({
       succes: true,
       user,
